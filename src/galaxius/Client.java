@@ -216,6 +216,7 @@ public class Client extends JFrame {
 
                 } else if (e.getKeyCode() == KeyEvent.VK_SPACE && !SpacePressed) {
                     SpacePressed = true;
+                    System.out.println("Space pressed");
                     SpaceTime = System.currentTimeMillis();
                     Action action = new Action(Action.ATTACK_BASIC);  
                     action.x=board.getMyShip().getX();
@@ -250,6 +251,7 @@ public class Client extends JFrame {
 
                 } else if (e.getKeyCode() == KeyEvent.VK_SPACE && SpacePressed) {
                     SpacePressed = false;
+                    System.out.println("Space Released");
                     Action action = new Action(Action.ATTACK_BASIC_STOP);
                     action.time = (int) (System.currentTimeMillis() - SpaceTime);
                     sendData(new Pack(Pack.ACTION, action));

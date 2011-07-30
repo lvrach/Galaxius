@@ -5,6 +5,7 @@
 package galaxius;
 
 
+import galaxius.Ships.ShipLinker;
 import galaxius.skills.AIsimpleSkill;
 import galaxius.skills.FireStarterSkill;
 import galaxius.skills.Skill;
@@ -34,7 +35,7 @@ public class Ship extends FlyObject {
         CountID++;
         healpoints =healpointsMax;  
         level=1;
-        typeID = 0;
+        setType(0);
         if(ownerID>=0)
         skill = new FireStarterSkill(this);
         else
@@ -46,8 +47,14 @@ public class Ship extends FlyObject {
         ownerID = newShip.ownerID;
         ID = newShip.getID();
         healpoints =100;
-        typeID = newShip.getTypeID();
+        setType(newShip.getTypeID());
         level=1;
+    }
+    
+    public void setType(int typeID)
+    {
+        this.typeID=typeID;
+        skill = ShipLinker.newSkill(typeID, this);
     }
     
     public Skill getSkill()

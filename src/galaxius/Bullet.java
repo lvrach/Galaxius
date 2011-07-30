@@ -18,13 +18,13 @@ public class Bullet extends FlyObject {
 
     
 
-    public Bullet(int playerID, Ship ship, int damage) {
+    public Bullet(int playerID, Ship ship) {
         super(ship.getX(), ship.getY(),3,3, 90, 300);        
         ID = idCounter;
         idCounter++;
         this.ownerID = ship.getOwnerID();
         this.shipID = ship.getID();
-        this.damage = 5;
+        this.damage = 0;
 
     }
     public Bullet(Bullet bullet)
@@ -48,6 +48,9 @@ public class Bullet extends FlyObject {
         setY(getRealY() - (Math.sin(Math.toRadians(getDirection())) * getSpeed() * timePeriod / 1000));
     }
 
+    public void setDamage(int damage){
+        this.damage=damage;
+    }
 
     public int getDamage() {
         return damage;

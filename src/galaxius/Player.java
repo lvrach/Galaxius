@@ -140,11 +140,12 @@ public class Player implements Runnable {
         
         
         if (isBasicAttackSelected() || basicAttackSpend<basicAttackDuration) {
-            ship.getSkill().basicAttack(timePeriod);
+            
             
         }else{
             basicAttackSpend=0;
             basicAttackDuration=0;
+            ship.getSkill().basicAttackEnable(false);
         }
             
 
@@ -196,6 +197,8 @@ public class Player implements Runnable {
                     else if (tempAction.isAttackBasic()) {
                         this.selectBasicAttack(true);
                         ship.setX(tempAction.x);
+                        ship.getSkill().basicAttackEnable(true);
+                        
                         
                         
                     } else if (tempAction.isAttackStop()) {
@@ -204,7 +207,7 @@ public class Player implements Runnable {
                         
 
                     }else if(tempAction.isShipSelect()){
-                        ship.setTypeID(tempAction.x);
+                        ship.setType(tempAction.x);
                         clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));
                     }
                         

@@ -6,7 +6,7 @@ package galaxius;
 
 import galaxius.Ships.Anime;
 import galaxius.Ships.AnimeAI;
-import galaxius.Ships.ShipType;
+import galaxius.Ships.ShipLinker;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -40,9 +40,9 @@ public class BoardG extends JPanel {
         bullets = new ArrayList<Bullet>();
         
         //load ship animes
-        Animator = new Anime[ShipType.size()];
-        for (int i = 0; i < ShipType.size(); i++) {
-            Animator[i] = new Anime(ShipType.Names[i]);
+        Animator = new Anime[ShipLinker.size()];
+        for (int i = 0; i < ShipLinker.size(); i++) {
+            Animator[i] = new Anime(ShipLinker.Names[i]);
         }
 
         //load AIship animes

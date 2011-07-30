@@ -5,7 +5,7 @@
 package galaxius;
 
 import galaxius.Ships.Anime;
-import galaxius.Ships.ShipType;
+import galaxius.Ships.ShipLinker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,9 +38,9 @@ public class ShipSelector extends JPanel {
         
         
         
-        for(int i=0;i<ShipType.size();i++)
+        for(int i=0;i<ShipLinker.size();i++)
         {
-            Anime Animator= new Anime(ShipType.Names[i]);
+            Anime Animator= new Anime(ShipLinker.Names[i]);
             JButton button = new JButton();
             button.setActionCommand( Integer.toString(i));           
             button.setIcon(Animator.getImage(false, Anime.IDLE));
