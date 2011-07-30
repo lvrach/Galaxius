@@ -73,12 +73,12 @@ public class Board {
     private void AIsimulator()
     {
         
-         waveClock = new Timer(2200, new ActionListener() {
+         waveClock = new Timer(2500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!wave.hasShips())
                 {
-                    wave = new AIwave(10);
+                    wave = new AIwave(20);
                     
                 }
             }
