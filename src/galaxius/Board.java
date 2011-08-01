@@ -14,6 +14,7 @@ import java.util.List;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 /**
@@ -28,6 +29,8 @@ public class Board {
     private ClientInformer clientInformer;
     private Timer SimClock;
     private Timer waveClock;
+    
+
 
     public Board() {
         
@@ -43,6 +46,7 @@ public class Board {
         Skill.setClientInformer(clientInformer);
         AIwave.setClientInformer(clientInformer);
         AIwave.setBullets(bullets);
+        
         
         SimClock = new Timer(30, new ActionListener() {
             @Override
@@ -64,7 +68,7 @@ public class Board {
         playerThread.setName("Player"+player.getID());
         playerThread.start();
 
-        clientInformer.sendALL(new Pack("New player" + player.getID() + "join"));
+        clientInformer.sendALL(new Pack("New player" + player.getID() + " joined"));
         clientInformer.inform();
 
 
@@ -123,7 +127,10 @@ public class Board {
                     
                     for (int i = 0; i < players.size(); i++) {
                         players.get(i).getShip().interact(bullet);
-                        players.get(i).sendData(new Pack(Pack.EVENT,new Event(Event.HP_Change,players.get(i).getShip().getHP())));
+                        clientInformer.inform(new Pack( Pack.EVENT,new Event(Event.HP_Change,
+                                                                               players.get(i).getShip().getHP(),
+                                                                               players.get(i).getShip().getID()) 
+                                ));
                     }
                 }else{
                     bullets.remove(j);

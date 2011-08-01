@@ -29,7 +29,7 @@ public class Ship extends FlyObject {
     private int level;
     
     public Ship(int ownerID) {
-        super(400, 650 ,20 ,20);
+        super(400, 700 ,20 ,20);
         this.ownerID = ownerID;
         ID = CountID;
         CountID++;
@@ -51,10 +51,15 @@ public class Ship extends FlyObject {
         level=1;
     }
     
+   
+    
+    
     public void setType(int typeID)
     {
         this.typeID=typeID;
         skill = ShipLinker.newSkill(typeID, this);
+        this.setWidth(40);
+        this.setHeight(50);
     }
     
     public Skill getSkill()

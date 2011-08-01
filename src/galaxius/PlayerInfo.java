@@ -20,37 +20,25 @@ import javax.swing.Timer;
 public class PlayerInfo extends JPanel{
     
     Client client;
-    Timer repaintTimer;
-    public int Hp;
-    public int MaxHp;
+    
     
     public PlayerInfo(Client newClient)
     {
-        this.setSize(200, 300);
-        this.setPreferredSize( new Dimension(200,300));
-        this.client = newClient;
-        
-             Hp=0;
-             MaxHp=100;  
+        client = newClient;
+        this.setSize(250, 150);
+        this.setPreferredSize( new Dimension(250,150));        
         setOpaque(false);
         this.setBackground(Color.DARK_GRAY);
         
-    }
-    
-    
-   public void setHP(int hp)
-   {
-       Hp=hp;
-       repaint();
-   }
-    
+    }  
     @Override
     public void paint(Graphics g)
     {
         
-        if(client.board.getMyShip()!=null)
+        if(client.board.getMyShip() != null)
         {              
-            
+            int Hp = client.board.getMyShip().getHP();
+            int MaxHp = client.board.getMyShip().getMaxHP();
             g.setColor(Color.GREEN);
             g.fillRect(10,30, (Hp*200/MaxHp),20);
             g.setColor(Color.BLACK);

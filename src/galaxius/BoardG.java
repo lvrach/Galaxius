@@ -14,6 +14,8 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -33,11 +35,14 @@ public class BoardG extends JPanel {
     private Anime[] Animator;
     private AnimeAI AnimatorAI;
     Client client;
-
+    private ImageIcon background;
+    
     public BoardG(Client client) {
         this.client = client;
         ships = new ArrayList<Ship>();
         bullets = new ArrayList<Bullet>();
+        ships=Collections.synchronizedList(ships);
+        bullets=Collections.synchronizedList(bullets);
         
         //load ship animes
         Animator = new Anime[ShipLinker.size()];
@@ -47,7 +52,7 @@ public class BoardG extends JPanel {
 
         //load AIship animes
         AnimatorAI = new AnimeAI ();
-
+background=new ImageIcon(getClass().getResource("background.png"));
         setSize(770, 768);
         setPreferredSize(new Dimension(770, 768));
         setMinimumSize(new Dimension(770, 768));  
@@ -74,17 +79,24 @@ public class BoardG extends JPanel {
         screenFreq.start();
     }
 
-    public synchronized void setMyID(int newID) {
+    public void setMyID(int newID) {
         myID = newID;
+        
     }
 
-    public synchronized Ship getMyShip() {
+    public Ship getShip(int id) {
         for (int i = 0; i < ships.size(); i++) {
-            if (ships.get(i).getID() == myID) {
+            if (ships.get(i).getID() == id) {
                 return ships.get(i);
             }
         }
         return null;
+    }
+    public Ship getMyShip()
+    {
+        
+        return  getShip(myID);
+        
     }
 
     public synchronized void updateShip(Ship newShip) {
@@ -94,17 +106,35 @@ public class BoardG extends JPanel {
             if (ships.get(i).is(newShip)) {
 
                 ships.remove(i);
-
+                
             }
 
         }
         if (newShip.exist()) {
             ships.add(newShip);
+            client.playerInfo.repaint();
         }
 
     }
+     public void updateShip( Event event)
+     {
+       
+         if(getShip(event.getID())!=null)
+        {
+         if ( event.isHpChange())
+         {
+             
+             getShip(event.getID()).setHP(event.getValue());
+             
+             if(event.getID()== myID)
+             {
+                 client.playerInfo.repaint();
+             }
+         }
+        }
+     }
 
-    public synchronized void updateBullet(Bullet newBullet) {
+    public void updateBullet(Bullet newBullet) {
 
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets.get(i).is(newBullet)) {
@@ -125,8 +155,7 @@ public class BoardG extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 770, 768);
+        background.paintIcon(this, g, 0, 0);
         paintShips(g);
         paintBullets(g);
         
@@ -141,23 +170,29 @@ public class BoardG extends JPanel {
     private void drawShip(Graphics g, Ship ship) {
         if (ship.getID() == myID) {
             if (ship.getDirection() == 180) {
-                Animator[ship.getTypeID()].getImage(true, Anime.LEFT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - 40);
+                Animator[ship.getTypeID()].getImage(true, Anime.LEFT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
             } else if (ship.getDirection() == 0) {
-                Animator[ship.getTypeID()].getImage(true, Anime.RIGHT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - 40);
+                Animator[ship.getTypeID()].getImage(true, Anime.RIGHT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
             } else {
-                Animator[ship.getTypeID()].getImage(true, Anime.IDLE).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - 40);
-            }
-
+                Animator[ship.getTypeID()].getImage(true, Anime.IDLE).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
+            }   
         } else if (ship.getOwnerID() < 0) {
-           AnimatorAI.getImage(ship).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY());           
+           AnimatorAI.getImage(ship).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY());  
+           
         } else {
+            
             if (ship.getDirection() == 180) {
-                Animator[ship.getTypeID()].getImage(false, Anime.LEFT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - 40);
+                Animator[ship.getTypeID()].getImage(false, Anime.LEFT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
             } else if (ship.getDirection() == 0) {
-                Animator[ship.getTypeID()].getImage(false, Anime.RIGHT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - 40);
+                Animator[ship.getTypeID()].getImage(false, Anime.RIGHT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
             } else {
-                Animator[ship.getTypeID()].getImage(false, Anime.IDLE).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - 40);
+                Animator[ship.getTypeID()].getImage(false, Anime.IDLE).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
             }
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(ship.getX()-ship.getWidth()/2, 4+ship.getY()+ship.getHeight()/2,ship.getWidth(), 4);
+            g.setColor(Color.GREEN);
+            g.fillRect(ship.getX()-ship.getWidth()/2, 4+ship.getY()+ship.getHeight()/2,ship.getHP()*ship.getWidth()/ship.getMaxHP(), 4);
+            
         }
     }
 

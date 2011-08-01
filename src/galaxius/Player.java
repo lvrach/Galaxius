@@ -64,7 +64,7 @@ public class Player implements Runnable {
             output.flush();
             sendData(new Pack("wellcome"));
             sendData(new Pack(Pack.INIT,this.getShip().getID()));
-            sendData(new Pack(Pack.EVENT,new Event(Event.HP_Change,ship.getHP())));
+            clientInform.inform(new Pack(Pack.EVENT,new Event(Event.HP_Change,ship.getHP(),ship.getID())));
             
         } catch (IOException ex) {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
@@ -211,6 +211,10 @@ public class Player implements Runnable {
                         clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));
                     }
                         
+                }
+                else if(pack.isMessage())
+                {
+                    clientInform.inform(pack);
                 }
 
             }

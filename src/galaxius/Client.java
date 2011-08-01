@@ -40,13 +40,14 @@ public class Client extends JFrame {
 
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private String message = "";
+    public boolean connected = false;
     private String serverIP;
     private Socket client;   
     private Pack pack;
     public BoardG board;
     private JPanel multiView;
-    private PlayerInfo playerInfo;
+    public PlayerInfo playerInfo;
+    public ChatRoom chatRoom;
     
     JPanel leftBar = new JPanel();
     private boolean LeftPressed = false;
@@ -61,39 +62,40 @@ public class Client extends JFrame {
         this.serverIP = serverIP;
 
         
-        
+        setResizable(false);
         setSize(1024, 768);
         this.setPreferredSize(new Dimension(1024, 768));
         this.setMinimumSize(new Dimension(1024, 768));
+        
 
         
         setBackground(Color.DARK_GRAY);
         
         board = new BoardG(this);
+        chatRoom = new ChatRoom(this);
+        board.setPreferredSize(new Dimension(770,768));
+        board.setMinimumSize(new Dimension(770,768));
       
         add(board);
 
-          multiView = new ShipSelector(this);
-        playerInfo=new  PlayerInfo(this);
+        multiView = new ShipSelector(this);        
+        playerInfo=new  PlayerInfo(this); 
         
         leftBar.setSize(254,768);
         leftBar.setPreferredSize(new Dimension(254,768));         
         leftBar.setMinimumSize(new Dimension(254,768));
         leftBar.setBackground(Color.DARK_GRAY);
         leftBar.add(multiView, BorderLayout.NORTH);
-         leftBar.add(playerInfo, BorderLayout.SOUTH); 
+        leftBar.add(chatRoom, BorderLayout.CENTER);
+        leftBar.add(playerInfo, BorderLayout.SOUTH); 
           
         add(leftBar, BorderLayout.EAST);
  
-
-        setSize(800, 600);
         setVisible(true);
         
        
-    }
+    }    
     
-      
-
     public void runClient() {
         Thread listenerThread = new Thread(
                 new Runnable() {
@@ -164,10 +166,6 @@ public class Client extends JFrame {
 
     }
     
-    public void showProfil()
-    {
-        
-    }
 
     private void startListeners() {
         this.addKeyListener(new KeyAdapter() {
@@ -216,7 +214,7 @@ public class Client extends JFrame {
 
                 } else if (e.getKeyCode() == KeyEvent.VK_SPACE && !SpacePressed) {
                     SpacePressed = true;
-                    System.out.println("Space pressed");
+                    
                     SpaceTime = System.currentTimeMillis();
                     Action action = new Action(Action.ATTACK_BASIC);  
                     action.x=board.getMyShip().getX();
@@ -226,6 +224,11 @@ public class Client extends JFrame {
 
                 if (e.getKeyCode() == KeyEvent.VK_S) {
                     showShipSelector();
+                }
+                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                   
+                    chatRoom.getFocus();                    
+
                 }
             }
 
@@ -251,13 +254,14 @@ public class Client extends JFrame {
 
                 } else if (e.getKeyCode() == KeyEvent.VK_SPACE && SpacePressed) {
                     SpacePressed = false;
-                    System.out.println("Space Released");
+                   
                     Action action = new Action(Action.ATTACK_BASIC_STOP);
                     action.time = (int) (System.currentTimeMillis() - SpaceTime);
                     sendData(new Pack(Pack.ACTION, action));
                 }
 
             }
+          
         });
 
     }
@@ -265,7 +269,7 @@ public class Client extends JFrame {
     private void unPack(Pack pack) {
 
         if (pack.isMessage()) {
-           
+           chatRoom.append((String) pack.unPack());
         }
 
         if (pack.isShip()) {
@@ -284,20 +288,15 @@ public class Client extends JFrame {
         if (pack.isEvent())
         {
             Event event = (Event) pack.unPack();
-            if(event.isHpChange())
-            {
-                playerInfo.setHP(event.getValue());                
-                
-            }
-            
+            board.updateShip(event);   
             
         }
         if (pack.isInit()) {
-            board.setMyID((Integer) pack.unPack());
+            board.setMyID((Integer) pack.unPack());                      
+            connected = true; 
+            board.run();                
+            chatRoom.setChatEnabled(true);
             startListeners();
-            board.run();
-           
-
         }
 
 
