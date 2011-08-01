@@ -210,11 +210,18 @@ public class Player implements Runnable {
                         ship.setType(tempAction.x);
                         clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));
                     }
+                  
                         
                 }
                 else if(pack.isMessage())
                 {
                     clientInform.inform(pack);
+                }
+                else if(pack.isName())
+                {
+                    ship.pilotName=(String) pack.unPack();
+                    clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));
+                    clientInform.inform(new Pack("*Commander*:Listen up "+ (String) pack.unPack() + " join the team"));
                 }
 
             }

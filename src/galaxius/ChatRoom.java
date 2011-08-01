@@ -52,17 +52,18 @@ public class ChatRoom extends JPanel{
         
         displayArea = new JTextArea();
         displayArea.setFocusable(false);
-        displayArea.setMinimumSize(new Dimension(250,400));
-        displayArea.setEditable(false);
-        displayArea.setPreferredSize(new Dimension(220,400));
         
-        add( new JScrollPane(displayArea),BorderLayout.NORTH);
-        add(enterField,BorderLayout.CENTER);
+        displayArea.setEditable(false);
+        
+        
+        add( new JScrollPane(displayArea),BorderLayout.CENTER);
+        add(enterField,BorderLayout.SOUTH);
         
     }
     public void append(String message)
     {
         displayArea.append(message+"\n");
+        
     }
     public void setChatEnabled(boolean state)
     {

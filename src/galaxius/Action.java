@@ -19,6 +19,7 @@ public class Action implements Serializable {
     public static final int ATTACK_BASIC = 4;
     public static final int ATTACK_BASIC_STOP =5; 
     public static final int SHIP_SELECT =10;
+    public static final int SHIP_NAME =11;
     public int x;
     public int y;    
     private int actionCode;
@@ -51,6 +52,9 @@ public class Action implements Serializable {
         return (actionCode == ATTACK_BASIC_STOP);
     }
     public boolean isShipSelect() {
+        return (actionCode == SHIP_SELECT);
+    }
+    public boolean isNameSelect() {
         return (actionCode == SHIP_SELECT);
     }
     

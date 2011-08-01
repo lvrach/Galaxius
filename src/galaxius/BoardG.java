@@ -36,6 +36,7 @@ public class BoardG extends JPanel {
     private AnimeAI AnimatorAI;
     Client client;
     private ImageIcon background;
+    public boolean showNames;
     
     public BoardG(Client client) {
         this.client = client;
@@ -175,9 +176,12 @@ background=new ImageIcon(getClass().getResource("background.png"));
                 Animator[ship.getTypeID()].getImage(true, Anime.RIGHT).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
             } else {
                 Animator[ship.getTypeID()].getImage(true, Anime.IDLE).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
-            }   
+            }
+            
         } else if (ship.getOwnerID() < 0) {
-           AnimatorAI.getImage(ship).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY());  
+           AnimatorAI.getImage(ship).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY()); 
+           
+            
            
         } else {
             
@@ -188,10 +192,16 @@ background=new ImageIcon(getClass().getResource("background.png"));
             } else {
                 Animator[ship.getTypeID()].getImage(false, Anime.IDLE).paintIcon(this, g, ship.getX() - ship.getWidth() / 2, ship.getY() - ship.getHeight()/2);
             }
+            
             g.setColor(Color.LIGHT_GRAY);
             g.fillRect(ship.getX()-ship.getWidth()/2, 4+ship.getY()+ship.getHeight()/2,ship.getWidth(), 4);
             g.setColor(Color.GREEN);
             g.fillRect(ship.getX()-ship.getWidth()/2, 4+ship.getY()+ship.getHeight()/2,ship.getHP()*ship.getWidth()/ship.getMaxHP(), 4);
+            if(showNames)
+            {
+                g.setColor(Color.LIGHT_GRAY);
+                g.drawString(":"+ship.pilotName, ship.getX() - ship.getWidth() / 2, 10+ ship.getY() - ship.getHeight()/2);
+            } 
             
         }
     }

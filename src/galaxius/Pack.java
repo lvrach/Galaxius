@@ -20,6 +20,7 @@ public class Pack implements Serializable {
     public static final int BULLET = 4;
     public static final int PROFIL = 5;
     public static final int ACTION = 10;
+    public static final int NAME = 11;
      public static final int EVENT = 20;
     
     private int type;
@@ -73,6 +74,10 @@ public class Pack implements Serializable {
     public boolean isEvent()
     {
         return (type==EVENT);
+    }
+    public boolean isName()
+    {
+        return (type==NAME);
     }
 
     @Override

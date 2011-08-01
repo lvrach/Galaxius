@@ -48,6 +48,7 @@ public class Client extends JFrame {
     private JPanel multiView;
     public PlayerInfo playerInfo;
     public ChatRoom chatRoom;
+    private String playerName;
     
     JPanel leftBar = new JPanel();
     private boolean LeftPressed = false;
@@ -57,10 +58,10 @@ public class Client extends JFrame {
     private long MoveRightTime = 0;
     private long MoveLeftTime = 0;
 
-    public Client(String serverIP) {
+    public Client(String serverIP,String playerName) {
         super("Galaxius");
         this.serverIP = serverIP;
-
+        this.playerName=playerName;
         
         setResizable(false);
         setSize(1024, 768);
@@ -81,6 +82,7 @@ public class Client extends JFrame {
         multiView = new ShipSelector(this);        
         playerInfo=new  PlayerInfo(this); 
         
+        leftBar.setLayout(new BorderLayout());
         leftBar.setSize(254,768);
         leftBar.setPreferredSize(new Dimension(254,768));         
         leftBar.setMinimumSize(new Dimension(254,768));
@@ -222,13 +224,17 @@ public class Client extends JFrame {
 
                 }
 
-                if (e.getKeyCode() == KeyEvent.VK_S) {
+                else if (e.getKeyCode() == KeyEvent.VK_S) {
                     showShipSelector();
                 }
-                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                    
                     chatRoom.getFocus();                    
 
+                }
+                else if( e.getKeyCode() == KeyEvent.VK_N)
+                {
+                    board.showNames=true;
                 }
             }
 
@@ -258,6 +264,10 @@ public class Client extends JFrame {
                     Action action = new Action(Action.ATTACK_BASIC_STOP);
                     action.time = (int) (System.currentTimeMillis() - SpaceTime);
                     sendData(new Pack(Pack.ACTION, action));
+                }
+                else if( e.getKeyCode() == KeyEvent.VK_N)
+                {
+                    board.showNames=false;
                 }
 
             }
@@ -311,6 +321,8 @@ public class Client extends JFrame {
         output.flush();
 
         input = new ObjectInputStream(client.getInputStream());
+        
+        sendData( new Pack(Pack.NAME,playerName));
 
     }
 

@@ -68,7 +68,7 @@ public class Board {
         playerThread.setName("Player"+player.getID());
         playerThread.start();
 
-        clientInformer.sendALL(new Pack("New player" + player.getID() + " joined"));
+        
         clientInformer.inform();
 
 

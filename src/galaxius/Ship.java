@@ -22,6 +22,7 @@ public class Ship extends FlyObject {
     private int typeID;
     
     public Skill skill;
+    public String pilotName="";
     
     private int healpoints;
     private int healpointsMax=100;
@@ -36,6 +37,7 @@ public class Ship extends FlyObject {
         healpoints =healpointsMax;  
         level=1;
         setType(0);
+        
         if(ownerID>=0)
         skill = new FireStarterSkill(this);
         else
@@ -49,6 +51,7 @@ public class Ship extends FlyObject {
         healpoints =100;
         setType(newShip.getTypeID());
         level=1;
+        pilotName=newShip.pilotName;
     }
     
    

@@ -36,6 +36,8 @@ public class menu extends javax.swing.JFrame {
         JoinServerButton = new javax.swing.JButton();
         IPTextField = new javax.swing.JTextField();
         HostButton = new javax.swing.JButton();
+        PlayerName = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,33 +64,50 @@ public class menu extends javax.swing.JFrame {
             }
         });
 
+        PlayerName.setText("Player");
+        PlayerName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PlayerNameActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Nick-name:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(StartServerButton, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(PlayerName, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(StartServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(JoinServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(IPTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
-                    .addComponent(HostButton, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))
+                    .addComponent(HostButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addComponent(StartServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(37, 37, 37)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(PlayerName))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JoinServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(IPTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(HostButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
+                .addGap(27, 27, 27)
+                .addComponent(StartServerButton)
+                .addContainerGap())
         );
 
         pack();
@@ -102,7 +121,7 @@ public class menu extends javax.swing.JFrame {
     }//GEN-LAST:event_StartServerButtonActionPerformed
 
     private void JoinServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JoinServerButtonActionPerformed
-        Client client = new Client(IPTextField.getText());
+        Client client = new Client(IPTextField.getText(),PlayerName.getText());
         client.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         client.runClient();
         this.setVisible(false);
@@ -113,11 +132,15 @@ public class menu extends javax.swing.JFrame {
         server.setVisible(false);
         server.runServer();       
         
-        Client client = new Client("127.0.0.1");
+        Client client = new Client("127.0.0.1",PlayerName.getText());
         client.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         client.runClient();
         this.setVisible(false);
     }//GEN-LAST:event_HostButtonActionPerformed
+
+    private void PlayerNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PlayerNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_PlayerNameActionPerformed
 
     /**
      * @param args the command line arguments
@@ -134,6 +157,8 @@ public class menu extends javax.swing.JFrame {
     private javax.swing.JButton HostButton;
     private javax.swing.JTextField IPTextField;
     private javax.swing.JButton JoinServerButton;
+    private javax.swing.JTextField PlayerName;
     private javax.swing.JButton StartServerButton;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }
