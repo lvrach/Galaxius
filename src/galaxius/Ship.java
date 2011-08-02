@@ -5,9 +5,6 @@
 package galaxius;
 
 
-import galaxius.Ships.ShipLinker;
-import galaxius.skills.AIsimpleSkill;
-import galaxius.skills.FireStarterSkill;
 import galaxius.skills.Skill;
 
 /**
@@ -18,7 +15,7 @@ public class Ship extends FlyObject {
 
     private int ownerID;
     private static int CountID = 0;
-    private final int ID;
+    private int ID;
     private int typeID;
     
     public Skill skill;
@@ -28,7 +25,7 @@ public class Ship extends FlyObject {
     private int healpointsMax=100;
     private int maxSpeed=180;   
     private int level;
-    
+   
     public Ship(int ownerID) {
         super(400, 700 ,20 ,20);
         this.ownerID = ownerID;
@@ -36,34 +33,21 @@ public class Ship extends FlyObject {
         CountID++;
         healpoints =healpointsMax;  
         level=1;
-        setType(0);
-        
-        if(ownerID>=0)
-        skill = new FireStarterSkill(this);
-        else
-        skill = new AIsimpleSkill(this);
+             
     }
-
+    
+   
     public Ship(Ship newShip) {
         super(newShip);
         ownerID = newShip.ownerID;
         ID = newShip.getID();
         healpoints =100;
-        setType(newShip.getTypeID());
-        level=1;
+        skill=newShip.skill;
+        level=newShip.getLevel();
         pilotName=newShip.pilotName;
+       typeID=newShip.typeID;
     }
-    
    
-    
-    
-    public void setType(int typeID)
-    {
-        this.typeID=typeID;
-        skill = ShipLinker.newSkill(typeID, this);
-        this.setWidth(40);
-        this.setHeight(50);
-    }
     
     public Skill getSkill()
     {
@@ -72,6 +56,7 @@ public class Ship extends FlyObject {
     public int getID() {
         return ID;
     }
+    
     public int getTypeID()
     {
         return typeID;
@@ -82,6 +67,14 @@ public class Ship extends FlyObject {
     public int getLevel() {
         return level;
     } 
+    public int getHP()
+    {
+        return healpoints;
+    }
+    public int getMaxHP()
+    {
+        return healpointsMax;
+    }
     public boolean is(Ship ship) {
         return ship.ID == ID;
     }
@@ -105,14 +98,15 @@ public class Ship extends FlyObject {
         healpoints=hp;
         }
     }
-    public int getHP()
+     public void setLevel(int level)
     {
-        return healpoints;
+        this.level=level;
     }
-    public int getMaxHP()
+     public void setID(int ID)
     {
-        return healpointsMax;
+        this.ID = ID;
     }
+    
     public void setMove(boolean moving,int direction)
     {
         if(moving)
@@ -127,8 +121,6 @@ public class Ship extends FlyObject {
             
         }
     }
-    
-   
     
     public boolean move(int timePeriod) {
         
@@ -146,22 +138,23 @@ public class Ship extends FlyObject {
     
     public boolean interact(FlyObject object)//return if ther is need for inform
     {
+        
         if(object instanceof Bullet)
         {
+            
             Bullet bullet  = (Bullet) object;
              if(bullet.getPlayerID()<0 && this.getOwnerID()<0)
-                    return false;
+                    return false;             
              if(bullet.getPlayerID()>=0 && this.getOwnerID()>=0)
                     return false;           
             
-            if((Math.abs(bullet.getRealX()-super.getRealX())<15)&&
-               (Math.abs(bullet.getRealY()-super.getRealY())<20))
+            if((Math.abs(bullet.getRealX()-super.getRealX())<25)&&
+               (Math.abs(bullet.getRealY()-super.getRealY())<25))
             {
                  if(getHP()>bullet.getDamage())
                  {
                      setHP(getHP()-bullet.getDamage());
-                 }else{
-                
+                 }else{              
                     
                     delete();
                     

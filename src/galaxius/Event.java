@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class Event implements Serializable {
     
     private int eventType;
-    public static final int HP_Change=0;
+    public static final int HP_Change=0;    
     private int value;
     private int id;
     
@@ -27,6 +27,7 @@ public class Event implements Serializable {
     {
         return eventType==HP_Change;
     }
+   
     public int getValue()
     {
         return value;

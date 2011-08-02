@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package galaxius.skills;
+package galaxius.Ships;
 
 import galaxius.Bullet;
 import galaxius.Pack;
 import galaxius.Ship;
+import galaxius.skills.Skill;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,14 +15,14 @@ import java.awt.event.ActionListener;
  *
  * @author xalgra
  */
-public class FireStarterSkill extends Skill{
+public class Fire_Starter_Skill extends Skill{
 
     private static final int basicAttackColldownDefaul=300;
     private int basicAttackColldown=0;
     protected Ship ship;
     private boolean basicAttackEnabled;
         
-    public FireStarterSkill(Ship ship)
+    public Fire_Starter_Skill(Ship ship)
     {
         this.ship = ship;
         timer.addActionListener( new ActionListener(){
@@ -41,7 +42,7 @@ public class FireStarterSkill extends Skill{
         if (basicAttackEnabled && basicAttackColldown <= 0) {
 
                 basicAttackColldown = basicAttackColldownDefaul;
-                Bullet bullet = new Bullet(ship.getOwnerID(), ship);                
+                Bullet bullet = new Bullet(ship);                
                 bullet.setDamage(5+(ship.getLevel()*2));
                 bullet.setSpeed(350+(ship.getLevel()*5));
                 bullets.add(bullet);

@@ -4,6 +4,7 @@
  */
 package galaxius;
 
+import galaxius.Ships.ShipLinker;
 import java.awt.Dimension;
 import java.io.EOFException;
 import java.util.concurrent.Executor;
@@ -32,70 +33,76 @@ public class Player implements Runnable {
     private ClientInformer clientInform;
     private static int idCount = 0;
     private ArrayBlockingQueue<Pack> buffer;
-    private static ExecutorService sender= Executors.newCachedThreadPool();
-   
-    
-    
+    private static ExecutorService sender = Executors.newCachedThreadPool();
     private final int ID;
     private Ship ship;
-   
-    private boolean basicAttackSelected;
     
+    private int state = 0;
+    private final static int WAIT = 0;
+    private final static int PLAY = 1;
+    private final static int OBSERVER = 2;
+    private final static int DEAD = 3;
+    
+    private boolean basicAttackSelected;
     private int basicAttackDuration;
     private int basicAttackSpend;
     private boolean moveSelected;
     private int moveDuration;
     private int moveSpend;
-    
     private boolean existan = true;
 
     public Player(Socket client, ClientInformer inform) {
         clientInform = inform;
         buffer = new ArrayBlockingQueue<Pack>(10);
-        
+
         ID = idCount;
         idCount++;
-        ship = new Ship(ID);        
-     
+        ship = ShipLinker.newShip(0,ID);
+
         try {
 
             input = new ObjectInputStream(client.getInputStream());
             output = new ObjectOutputStream(client.getOutputStream());
-            output.flush();
+            output.flush();            
             sendData(new Pack("wellcome"));
-            sendData(new Pack(Pack.INIT,this.getShip().getID()));
-            clientInform.inform(new Pack(Pack.EVENT,new Event(Event.HP_Change,ship.getHP(),ship.getID())));
-            
+            sendData(new Pack(Pack.INIT, this.getShip().getID()));
+            clientInform.inform(new Pack(Pack.EVENT, new Event(Event.HP_Change, ship.getHP(), ship.getID())));
+            setState(Player.PLAY);
         } catch (IOException ex) {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        
         sender.execute(new Runnable() {
 
             @Override
             public void run() {
                 while (true) {
-                   
-                        try {
-                            while (!buffer.isEmpty()) {
-                                output.writeObject(buffer.take());
-                                output.flush();
-                            }
-                            Thread.sleep(5);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-                        } 
 
-                    
+                    try {
+                        while (!buffer.isEmpty()) {
+                            output.writeObject(buffer.take());
+                            output.flush();
+                        }
+                        Thread.sleep(3);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+
 
                 }
             }
         });
 
 
+    }
+
+    public void setState(int state) {
+        this.state = state;
+        sendData(new Pack(Pack.STATE,state));
+        
     }
 
     public void selectBasicAttack(boolean selection) {
@@ -108,7 +115,7 @@ public class Player implements Runnable {
 
     public Ship getShip() {
         return ship;
-    } 
+    }
 
     public int getID() {
         return ID;
@@ -118,110 +125,106 @@ public class Player implements Runnable {
         return existan;
     }
 
-    public void doMove(int timePeriod)
-    {        
-        moveSpend+=timePeriod; 
-        
-        if(moveSelected || moveSpend<moveDuration){
+    public void doMove(int timePeriod) {
+        moveSpend += timePeriod;
+
+        if (moveSelected || moveSpend < moveDuration) {
             ship.move(timePeriod);
-        }else{
-            
+        } else {
+
             ship.setMove(false, 90);
-            clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)),getID());
-            moveSpend=0;
-            moveDuration=0;
+            clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)), getID());
+            moveSpend = 0;
+            moveDuration = 0;
         }
-        
-        
+
+
     }
+
     public void doActions(int timePeriod) {
-       
+
         basicAttackSpend += timePeriod;
-        
-        
-        if (isBasicAttackSelected() || basicAttackSpend<basicAttackDuration) {
-            
-            
-        }else{
-            basicAttackSpend=0;
-            basicAttackDuration=0;
+
+
+        if (isBasicAttackSelected() || basicAttackSpend < basicAttackDuration) {
+        } else {
+            basicAttackSpend = 0;
+            basicAttackDuration = 0;
             ship.getSkill().basicAttackEnable(false);
         }
-            
+
 
     }
 
     public void sendData(Pack pack) {
-        try {          
-                
+        try {
+
             buffer.put(pack);
         } catch (InterruptedException ex) {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
- 
 
     @Override
     public void run() {
 
         try {
             while (true) {
+                if (state == Player.PLAY) {
+
+
+                    Pack pack = (Pack) input.readObject();
+
+                    if (pack.isAction()) {
+
+                        Action tempAction = (Action) pack.unPack();
+
+                        if (tempAction.isMoveLeft()) {
+
+                            ship.setMove(true, 180);
+                            moveSelected = true;
+                            clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)), getID());
+
+                        } else if (tempAction.isMoveRight()) {
+                            ship.setMove(true, 0);
+                            moveSelected = true;
+                            clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)), getID());
+
+                        } else if (tempAction.isMoveStop()) {
+
+                            moveSelected = false;
+                            moveDuration = tempAction.time;
+
+                        } else if (tempAction.isAttackBasic()) {
+                            this.selectBasicAttack(true);
+                            ship.setX(tempAction.x);
+                            ship.getSkill().basicAttackEnable(true);
 
 
 
-                Pack pack = (Pack) input.readObject();
+                        } else if (tempAction.isAttackStop()) {
+                            this.selectBasicAttack(false);
+                            this.basicAttackDuration = tempAction.time;
 
-                if (pack.isAction()) {
 
-                    Action tempAction = (Action) pack.unPack();
+                        } else if (tempAction.isShipSelect()) {
+                            int tempLevel =ship.getLevel();
+                            int tempID = ship.getID();
+                            
+                            ship = ShipLinker.newShip(tempAction.x,getID());
+                            ship.setLevel(tempLevel);
+                            ship.setID(tempID);
+                            clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));
+                        }
 
-                    if (tempAction.isMoveLeft()) {
-                                            
-                        ship.setMove(true, 180);
-                        moveSelected=true;                        
-                        clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)),getID());
-                        
-                    } 
-                    else if (tempAction.isMoveRight()) {
-                        ship.setMove(true, 0);
-                        moveSelected=true;                        
-                        clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)),getID());
-                        
-                    } 
-                    else if (tempAction.isMoveStop()) {
-                        
-                        moveSelected=false;                        
-                        moveDuration=tempAction.time;       
-                        
-                    } 
-                    else if (tempAction.isAttackBasic()) {
-                        this.selectBasicAttack(true);
-                        ship.setX(tempAction.x);
-                        ship.getSkill().basicAttackEnable(true);
-                        
-                        
-                        
-                    } else if (tempAction.isAttackStop()) {
-                        this.selectBasicAttack(false);
-                        this.basicAttackDuration=tempAction.time;
-                        
 
-                    }else if(tempAction.isShipSelect()){
-                        ship.setType(tempAction.x);
+                    } else if (pack.isMessage()) {
+                        clientInform.inform(new Pack(ship.pilotName + ":" + pack));
+                    } else if (pack.isName()) {
+                        ship.pilotName = (String) pack.unPack();
                         clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));
+                        clientInform.inform(new Pack("*Commander*:" + (String) pack.unPack() + " join the team"));
                     }
-                  
-                        
-                }
-                else if(pack.isMessage())
-                {
-                    clientInform.inform(pack);
-                }
-                else if(pack.isName())
-                {
-                    ship.pilotName=(String) pack.unPack();
-                    clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));
-                    clientInform.inform(new Pack("*Commander*:Listen up "+ (String) pack.unPack() + " join the team"));
                 }
 
             }

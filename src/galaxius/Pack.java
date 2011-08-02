@@ -22,7 +22,8 @@ public class Pack implements Serializable {
     public static final int ACTION = 10;
     public static final int NAME = 11;
      public static final int EVENT = 20;
-    
+     public static final int STATE = 12;
+     
     private int type;
     private Object index;
 
@@ -78,6 +79,10 @@ public class Pack implements Serializable {
     public boolean isName()
     {
         return (type==NAME);
+    }
+    public boolean isState()
+    {
+        return type==STATE;
     }
 
     @Override

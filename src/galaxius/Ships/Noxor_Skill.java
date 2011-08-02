@@ -2,18 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package galaxius.skills;
+package galaxius.Ships;
 
 import galaxius.Bullet;
 import galaxius.Pack;
 import galaxius.Ship;
+import galaxius.skills.Skill;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 /**
  *
  * @author xalgra
  */
-public class NoxorSkill extends Skill{
+public class Noxor_Skill extends Skill{
 
     private static final int basicAttackColldownDefaul=800;
     private int basicAttackColldown=0;
@@ -21,7 +22,7 @@ public class NoxorSkill extends Skill{
     
     protected Ship ship;
     
-    public NoxorSkill(Ship ship){
+    public Noxor_Skill(Ship ship){
        this.ship = ship;
        timer.addActionListener( new ActionListener(){
 
@@ -41,12 +42,12 @@ public class NoxorSkill extends Skill{
 
                 basicAttackColldown = basicAttackColldownDefaul;
                 
-                Bullet bullet = new Bullet(ship.getOwnerID(), ship);                
+                Bullet bullet = new Bullet(ship);                
                 bullet.setDamage(10+(ship.getLevel()*3));
                 bullet.setSpeed(300+(ship.getLevel()*4));
                 bullet.setDirection(94);
                 
-                Bullet bullet2 = new Bullet(ship.getOwnerID(), ship);   
+                Bullet bullet2 = new Bullet(ship);   
                 bullet2.setDirection(86);
                 bullet2.setDamage(10+(ship.getLevel()*3));
                 bullet2.setSpeed(300+(ship.getLevel()*4));

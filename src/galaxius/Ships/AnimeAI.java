@@ -46,7 +46,7 @@ public class AnimeAI {
      
      public ImageIcon getImage(int id,int level ,float direction)
      {
-         level--;
+         //level--;
           if(direction==RIGHT)  
               return right[id][level];
           else if(direction==LEFT)

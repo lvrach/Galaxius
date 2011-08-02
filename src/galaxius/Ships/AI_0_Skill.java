@@ -2,21 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package galaxius.skills;
+package galaxius.Ships;
 
 import galaxius.Bullet;
 import galaxius.Pack;
 import galaxius.Ship;
+import galaxius.skills.Skill;
 /**
  *
  * @author xalgra
  */
-public class AIsimpleSkill extends Skill{
+public class AI_0_Skill extends Skill{
     private static final int basicAttackColldownDefaul=300;
     private int basicAttackColldown=basicAttackColldownDefaul;
     protected Ship ship;
         
-    public AIsimpleSkill(Ship ship)
+    public AI_0_Skill(Ship ship)
     {
         this.ship = ship;
         
@@ -29,10 +30,10 @@ public class AIsimpleSkill extends Skill{
        if (basicAttackColldown <= 0) {
 
                 basicAttackColldown = basicAttackColldownDefaul;
-                Bullet bullet = new Bullet(ship.getOwnerID(), ship);
+                Bullet bullet = new Bullet(ship);
                 bullet.setDirection(270);
                 bullet.setSpeed(250);
-                bullet.setDamage(2);
+                bullet.setDamage(3+ship.getLevel()*5);
                 bullets.add(bullet);
                 informer.inform(new Pack(Pack.BULLET, bullet));
                 

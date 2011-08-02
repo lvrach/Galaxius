@@ -54,7 +54,7 @@ public class Board {
                 simulator();
             }
         });
-        wave = new AIwave(0);
+        wave = new AIwave(0,1,20);
         AIsimulator();
         SimClock.start();
 
@@ -74,6 +74,11 @@ public class Board {
 
     }
 
+    private int[] wave_size = {8,10,10,10,10,15,8,10,15,20};
+    private int[] wave_level ={1,1,1 ,2,2 ,2 ,3,3 ,3 ,3 };
+    private int[] wave_aggressive ={80,90,90 ,60,70 ,98 ,90,90 ,100 ,88 };
+    private int wave_count=0;
+    
     private void AIsimulator()
     {
         
@@ -82,7 +87,10 @@ public class Board {
             public void actionPerformed(ActionEvent e) {
                 if(!wave.hasShips())
                 {
-                    wave = new AIwave(20);
+                    wave = new AIwave(wave_size[wave_count]*players.size(),wave_level[wave_count],wave_aggressive[wave_count]);
+                    wave_count++;
+                    if(wave_count>=wave_size.length)
+                       waveClock.stop();
                     
                 }
             }

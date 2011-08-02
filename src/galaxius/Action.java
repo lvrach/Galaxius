@@ -20,6 +20,7 @@ public class Action implements Serializable {
     public static final int ATTACK_BASIC_STOP =5; 
     public static final int SHIP_SELECT =10;
     public static final int SHIP_NAME =11;
+    
     public int x;
     public int y;    
     private int actionCode;
