@@ -4,6 +4,7 @@
  */
 package galaxius;
 
+import galaxius.Debris.Debris;
 import galaxius.Ships.Anime;
 import galaxius.Ships.AnimeAI;
 import galaxius.Ships.ShipLinker;
@@ -30,6 +31,8 @@ public class BoardG extends JPanel {
 
     private List<Ship> ships;
     private List<Bullet> bullets;
+    private List<Debris> debrises;
+    
     private Timer screenFreq;
     private int myID = 0;
     private Anime[] Animator;
@@ -42,8 +45,11 @@ public class BoardG extends JPanel {
         this.client = client;
         ships = new ArrayList<Ship>();
         bullets = new ArrayList<Bullet>();
+        debrises = new ArrayList<Debris>();
+        
         ships=Collections.synchronizedList(ships);
         bullets=Collections.synchronizedList(bullets);
+        debrises = Collections.synchronizedList(debrises);
         
         //load ship animes
         Animator = new Anime[ShipLinker.size()];
@@ -53,7 +59,7 @@ public class BoardG extends JPanel {
 
         //load AIship animes
         AnimatorAI = new AnimeAI ();
-background=new ImageIcon(getClass().getResource("background.png"));
+        background=new ImageIcon(getClass().getResource("background.png"));
         setSize(770, 768);
         setPreferredSize(new Dimension(770, 768));
         setMinimumSize(new Dimension(770, 768));  
@@ -71,6 +77,9 @@ background=new ImageIcon(getClass().getResource("background.png"));
                 }
                 for (int i = 0; i < ships.size(); i++) {
                     ships.get(i).move(30);
+                }
+                 for (int i = 0; i < debrises.size(); i++) {
+                    debrises.get(i).move(30);
                 }
                 
                 repaint();
@@ -139,26 +148,35 @@ background=new ImageIcon(getClass().getResource("background.png"));
 
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets.get(i).is(newBullet)) {
-
                 bullets.remove(i);
-
             }
-
         }
 
         if (newBullet.exist()) {
             bullets.add(newBullet);
+        }
+    }
+    
+    public void updateDebris(Debris newDebris) {
 
+        for (int i = 0; i < debrises.size(); i++) {
+            if (debrises.get(i).is(newDebris)) {
+                debrises.remove(i);
+            }
         }
 
-
+        if (newDebris.exist()) {
+            debrises.add(newDebris);
+        }
     }
+
 
     @Override
     public void paint(Graphics g) {
         background.paintIcon(this, g, 0, 0);
         paintShips(g);
         paintBullets(g);
+        paintDerbises(g);
         
     }
 
@@ -215,9 +233,24 @@ background=new ImageIcon(getClass().getResource("background.png"));
     private void drawBullet(Graphics g, Bullet bullet) {
         if (!bullet.exist()) {
             bullets.remove(bullet);
+             return;
         }
 
         g.setColor(Color.ORANGE);
         g.fillOval(bullet.getX(), bullet.getY(), 5, 5);
+    }
+    public void paintDerbises(Graphics g) {
+        for (int i = 0; i < debrises.size(); i++) {
+            drawDebris(g, debrises.get(i));
+        }
+    }
+
+    private void drawDebris(Graphics g, Debris derbis) {
+        if (!derbis.exist()) {
+            debrises.remove(derbis);
+            return;
+        }
+        g.setColor(Color.CYAN);
+        g.fillOval(derbis.getX(), derbis.getY(), 10, 10);
     }
 }

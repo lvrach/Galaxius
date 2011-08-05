@@ -53,7 +53,7 @@ public class Player implements Runnable {
 
     public Player(Socket client, ClientInformer inform) {
         clientInform = inform;
-        buffer = new ArrayBlockingQueue<Pack>(10);
+        buffer = new ArrayBlockingQueue<Pack>(100);
 
         ID = idCount;
         idCount++;
@@ -83,7 +83,7 @@ public class Player implements Runnable {
                             output.writeObject(buffer.take());
                             output.flush();
                         }
-                        Thread.sleep(3);
+                        Thread.sleep(1);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
@@ -210,16 +210,17 @@ public class Player implements Runnable {
                         } else if (tempAction.isShipSelect()) {
                             int tempLevel =ship.getLevel();
                             int tempID = ship.getID();
-                            
+                            String pilotName = ship.pilotName;
                             ship = ShipLinker.newShip(tempAction.x,getID());
                             ship.setLevel(tempLevel);
                             ship.setID(tempID);
+                            ship.pilotName=pilotName;
                             clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));
                         }
 
 
                     } else if (pack.isMessage()) {
-                        clientInform.inform(new Pack(ship.pilotName + ":" + pack));
+                        clientInform.inform(new Pack(ship.pilotName + ":" + pack.unPack()));
                     } else if (pack.isName()) {
                         ship.pilotName = (String) pack.unPack();
                         clientInform.inform(new Pack(Pack.SHIP, new Ship(ship)));

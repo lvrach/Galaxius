@@ -4,6 +4,7 @@
  */
 package galaxius;
 
+import galaxius.Debris.Debris;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -266,10 +267,13 @@ public class Client extends JFrame {
         if (pack.isMessage()) {
             chatRoom.append((String) pack.unPack());
         } else if (pack.isShip()) {
-            Ship ship = new Ship((Ship) pack.unPack());
-            board.updateShip(ship);
+            board.updateShip((Ship) pack.unPack());
+        } 
+        else if (pack.isDebris()) {
+            
+            board.updateDebris((Debris) pack.unPack());
 
-        } else if (pack.isBullet()) {
+        }else if (pack.isBullet()) {
 
             board.updateBullet((Bullet) pack.unPack());
 

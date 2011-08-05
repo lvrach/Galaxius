@@ -18,11 +18,12 @@ public class Pack implements Serializable {
     public static final int MESSAGE = 2;
     public static final int SHIP = 3;
     public static final int BULLET = 4;
-    public static final int PROFIL = 5;
+    public static final int DEBRIS = 5;
+    public static final int PROFIL = 6;
     public static final int ACTION = 10;
     public static final int NAME = 11;
-     public static final int EVENT = 20;
-     public static final int STATE = 12;
+    public static final int EVENT = 20;
+    public static final int STATE = 12;
      
     private int type;
     private Object index;
@@ -83,6 +84,10 @@ public class Pack implements Serializable {
     public boolean isState()
     {
         return type==STATE;
+    }
+    public boolean isDebris()
+    {
+        return type==DEBRIS;
     }
 
     @Override

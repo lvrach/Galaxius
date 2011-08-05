@@ -4,6 +4,8 @@
  */
 package galaxius;
 
+import galaxius.Debris.Debris;
+import galaxius.Debris.Health_Debris;
 import galaxius.Ships.ShipLinker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +22,7 @@ public class AIwave {
 
     private List<Ship> ships;
     private static List<Bullet> bullets;
+    private static List<Debris> debrises;
     private static Random rand = new Random();
     private static ClientInformer clientInformer;
     private Timer AItimer;
@@ -27,6 +30,7 @@ public class AIwave {
     private int defaultShipNumber;
     private int level;
     private int aggressive;
+    private int rate;
 
     public static void setClientInformer(ClientInformer clientInformer) {
         AIwave.clientInformer = clientInformer;
@@ -36,16 +40,20 @@ public class AIwave {
     public static void setBullets(List<Bullet> bullets) {
         AIwave.bullets = bullets;
     }
+     public static void setDebrises(List<Debris> debrises) {
+        AIwave.debrises= debrises;
+    }
 
-    public AIwave(int shipNumber,int level,int Aggressive) {
+    public AIwave(int shipNumber,int level,int Aggressive,int rate) {
 
         this.level=level;
         this.aggressive=Aggressive;
+        this.rate = rate;
         defaultShipNumber = shipNumber;
         ships = new ArrayList<Ship>();
         importShips();
 
-        AItimer = new Timer(300, new ActionListener() {
+        AItimer = new Timer(500, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -101,7 +109,8 @@ public class AIwave {
         ship.setX(20 + rand.nextInt(30) + x * 70);
         ship.setMove(true, 270);
         ship.setSpeed(30+(level-1)*3);
-        ship.setHP(10+(level-1)*10+rand.nextInt(5));
+        ship.setHP(15+(level-1)*10+rate*10);
+        ship.setMaxHP(15+(level-1)*10+rate*10);
         ships.add(ship);
         clientInformer.inform(new Pack(Pack.SHIP, new Ship(ship)));
     }
@@ -125,13 +134,24 @@ public class AIwave {
         
         for (int i=0; i < ships.size(); i++) {
             if (!ships.get(i).exist()) {
-                ships.remove(i);                
+                
+                
+                switch(rand.nextInt(10)){
+                    case 1:
+                        Debris debris = new Health_Debris(ships.get(i));                        
+                        debrises.add(debris);
+                        clientInformer.inform(new Pack(Pack.DEBRIS, new Health_Debris(debris) ));
+                        break;
+                        
+                }
+                clientInformer.inform(new Pack(Pack.SHIP, new Ship(ships.get(i))));
+                ships.remove(i);                 
                 break;
             }            
             if (ships.get(i).interact(bullet)) {
                 
-                clientInformer.inform(new Pack(Pack.SHIP, new Ship(ships.get(i))));
-                break;
+//                clientInformer.inform(new Pack(Pack.SHIP, new Ship(ships.get(i))));
+//                break;
             }
 
         }

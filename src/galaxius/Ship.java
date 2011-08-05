@@ -5,7 +5,9 @@
 package galaxius;
 
 
+import galaxius.Debris.Debris;
 import galaxius.skills.Skill;
+import java.util.List;
 
 /**
  *
@@ -20,7 +22,7 @@ public class Ship extends FlyObject {
     
     public Skill skill;
     public String pilotName="";
-    
+        
     private int healpoints;
     private int healpointsMax=100;
     private int maxSpeed=180;   
@@ -88,12 +90,17 @@ public class Ship extends FlyObject {
     public void setTypeID(int type) {
          typeID=type; 
     }
-    
+     public void setMaxHP(int hp)
+    {
+        healpointsMax = hp;
+    }
     public void setHP(int hp)
     {
         if(hp<0){
             this.delete();
             healpoints=0;
+        }else if(hp> getMaxHP()){
+            healpoints=getMaxHP();
         }else{            
         healpoints=hp;
         }
@@ -163,6 +170,17 @@ public class Ship extends FlyObject {
                  return true;
             }
         }
+        return false;
+    }
+    public boolean interact(Debris debris)//return if ther is need for inform
+    {
+        if((Math.abs(debris.getRealX()-super.getRealX())<25)&&
+               (Math.abs(debris.getRealY()-super.getRealY())<25))
+            {
+                
+                debris.interact(this);                
+                return true;
+            }
         return false;
     }
     
